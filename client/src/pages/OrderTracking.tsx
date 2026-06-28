@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { Order } from "../types";
-import { dummyDashboardOrdersData } from "../assets/assets";
 import Loading from "../components/Loading";
 import { ArrowLeftIcon, MapPinIcon, PhoneIcon } from "lucide-react";
 import OrderOTP from "../components/OrderTracking/OrderOTP";
 import LiveMap from "../components/OrderTracking/LiveMap";
 import OrderTimeLine from "../components/OrderTracking/OrderTimeLine";
+import api from "../config/api";
 
 const OrderTracking = () => {
   const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "₹";
@@ -20,29 +20,43 @@ const OrderTracking = () => {
   } | null>(null);
 
   useEffect(() => {
-    setOrder(dummyDashboardOrdersData.find((order) => order._id === id) as any);
-    setLoading(false);
+    api
+      .get(`/orders/${id}`)
+      .then((res) => setOrder(res.data.order))
+      .catch(() => navigate("/orders"))
+      .finally(() => setLoading(false));
   }, [id, navigate]);
 
   // Order load hone ke baad location set karo
   useEffect(() => {
-    if (!order) return;
+    if (!order || ["Delivered", "Cancelled", "Placed"].includes(order.status))
+      return;
 
-    let lat = 28.6139;
-    let lng = 77.209;
+    const fetchLocation = async () => {
+      try {
+        const { data } = await api.get(`/orders/${id}/location`);
+        console.log("Location API Response:", data);
+        if (
+          data.liveLocation?.lat &&
+          data.liveLocation?.lng &&
+          data.liveLocation.updatedAt
+        ) {
+          setLiveLocation({
+            lat: data.liveLocation.lat,
+            lng: data.liveLocation.lng,
+          });
+        }
 
-    const interval = setInterval(() => {
-      lat += 0.0005;
-      lng += 0.0005;
-
-      setLiveLocation({
-        lat,
-        lng,
-      });
-    }, 3000);
-
+        //Also update order status if it change
+        if (data.status && data.status !== order.status) {
+          setOrder((prev) => (prev ? { ...prev, status: data.status } : prev));
+        }
+      } catch (error) {}
+    };
+    fetchLocation();
+    const interval = setInterval(fetchLocation, 10000);
     return () => clearInterval(interval);
-  }, [order]);
+  }, [id, order?.status]);
 
   if (loading) return <Loading />;
 
@@ -63,7 +77,7 @@ const OrderTracking = () => {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-semibold text-app-green">
-              Order #{order._id.slice(-8).toUpperCase()}
+              Order #{order.id.slice(-8).toUpperCase()}
             </h1>
             <p className="text-sm text-app-text-light mt-1">
               Placed on{" "}
@@ -147,7 +161,7 @@ const OrderTracking = () => {
               </h3>
               <div className="space-y-3">
                 {order?.items.map((item, i) => (
-                  <div key={i} className="flex -item-center gap-3">
+                  <div key={i} className="flex items-center gap-3">
                     <img
                       src={item.image}
                       alt={item.name}
@@ -172,12 +186,15 @@ const OrderTracking = () => {
               <div className="mt-4 pt-3 border-t border-app-border space-y-1.5 text-sm">
                 <div className="flex justify-between">
                   <span className="text-app-text-light">Subtotal</span>
-                  <span>{order?.subtotal.toFixed(2)}</span>
+                  <span>
+                    {currency}
+                    {order?.subtotal.toFixed(2)}
+                  </span>
                 </div>
 
                 <div className="flex justify-between">
                   <span className="text-app-text-light">Delivery</span>
-                  <span>
+                  <span className="">
                     {order?.deliveryFee === 0
                       ? "Free"
                       : `${currency}${order?.deliveryFee.toFixed(2)}`}
@@ -194,7 +211,10 @@ const OrderTracking = () => {
 
                 <div className="flex justify-between pt-2 border-t border-app-border font-semibold text-app-green">
                   <span>Total</span>
-                  <span>{order?.total.toFixed(2)}</span>
+                  <span>
+                    {currency}
+                    {order?.total.toFixed(2)}
+                  </span>
                 </div>
               </div>
             </div>

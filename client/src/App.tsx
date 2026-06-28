@@ -44,16 +44,18 @@ const App = () => {
         {/* Main pages - With Navbar/Footer */}
         <Route path="/" element={<AppLayout />}>
           <Route index element={<Home />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/products/:id" element={<ProductPage />} />
-          <Route path="/search" element={<SearchResults />} />
-          <Route path="/deals" element={<FlashDeals />} />
-        </Route>
-        <Route element={<ProtectedRoute />}>
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/orders" element={<MyOrders />} />
-          <Route path="/orders/:id" element={<OrderTracking />} />
-          <Route path="/addresses" element={<Addresses />} />
+          <Route path="products" element={<Products />} />
+          <Route path="products/:id" element={<ProductPage />} />
+          <Route path="search" element={<SearchResults />} />
+          <Route path="deals" element={<FlashDeals />} />
+
+          {/* Protected Pages */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="checkout" element={<Checkout />} />
+            <Route path="orders" element={<MyOrders />} />
+            <Route path="orders/:id" element={<OrderTracking />} />
+            <Route path="addresses" element={<Addresses />} />
+          </Route>
         </Route>
 
         {/* Admin Pages */}
@@ -69,7 +71,7 @@ const App = () => {
         {/* Delivery Partner pages */}
         <Route path="/delivery/login" element={<DeliveryLogin />} />
         <Route path="/delivery" element={<DeliveryLayout />}>
-          <Route path="delivery" element={<DeliveryDashboard />} />
+          <Route index element={<DeliveryDashboard />} />
         </Route>
       </Routes>
     </>

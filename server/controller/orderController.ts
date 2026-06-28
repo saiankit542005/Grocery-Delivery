@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "../config/prisma.js";
-import { timeStamp } from "node:console";
 import { inngest } from "../inngest/index.js";
+import Stripe from "stripe";
 
 //Create Order
 //POST =>  api/orders
@@ -37,8 +37,8 @@ export const createOrder = async (req: Request, res: Response) => {
     if (!dbProduct) throw new Error(`Product ${item.product} not found`);
     return {
       product: dbProduct.id,
-      name: dbProduct.id,
-      image: dbProduct.name,
+      name: dbProduct.name,
+      image: dbProduct.image,
       price: dbProduct.price,
       quantity: item.quantity,
       unit: dbProduct.unit,
@@ -74,7 +74,29 @@ export const createOrder = async (req: Request, res: Response) => {
   });
 
   if (paymentMethod === "card") {
-    //strip payment link
+    
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+
+    //create session
+    const session = await stripe.checkout.sessions.create({
+      success_url:`${req.headers.origin}/orders?clearCart=true`,
+       cancel_url:`${req.headers.origin}/checkout`,
+      line_items:[
+        {
+          price_data:{
+            currency:"inr",
+            product_data:{
+              name:"Payment Groceries"
+            },
+            unit_amount:Math.round(total*100)
+          },
+          quantity:1,
+        },
+      ],
+      mode:"payment",
+      metadata:{orderId:order.id}
+    })
+    return res.json({url:session.url})
   }
 
   res.json({ order });
@@ -90,12 +112,12 @@ export const createOrder = async (req: Request, res: Response) => {
   //Send stock update events for each product in the order
   for (const item of orderItems) {
     await inngest.send({
-      name: "inventory/stock.update",
+      name: "inventory/stock.updated",
       data: { productId: item.product },
     });
   }
 
-  await inngest.send({name:"order/placed",data:{orderId:order.id}})
+  await inngest.send({ name: "order/placed", data: { orderId: order.id } });
 };
 
 //Get user's orders
@@ -169,7 +191,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
 };
 
 //GET all orders {admin}
-//GET => /api/orders/all
+//GET => /api/orders/:id/location
 export const getAllOrders = async (req: Request, res: Response) => {
   const orders = await prisma.order.findMany({
     where: { NOT: [{ paymentMethod: "card", isPaid: false }] },
@@ -185,7 +207,7 @@ export const getAllOrders = async (req: Request, res: Response) => {
 
 //GET order location
 //GET => /api/orders/all
-export const getOredrLocation = async (req: Request, res: Response) => {
+export const getOrderLocation = async (req: Request, res: Response) => {
   const order = await prisma.order.findFirst({
     where: { id: req.params.id as string, userId: req.user!.id },
     select: { liveLocation: true, status: true },

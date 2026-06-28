@@ -4,7 +4,7 @@ import {
   createOrder,
   getAllOrders,
   getOrder,
-  getOredrLocation,
+  getOrderLocation,
   getUserOrders,
   updateOrderStatus,
 } from "../controller/orderController.js";
@@ -16,7 +16,7 @@ orderRouter.post("/", auth, createOrder);
 orderRouter.get("/", auth, getUserOrders);
 orderRouter.get("/all", auth, admin, getAllOrders);
 orderRouter.get("/:id", auth, getOrder);
-orderRouter.put("/:id/statsu", auth, admin, updateOrderStatus);
-orderRouter.get("/:id/location", auth, getOredrLocation);
+orderRouter.put("/:id/status", auth, admin, updateOrderStatus);
+orderRouter.get("/:id/location", auth, getOrderLocation);
 
 export default orderRouter;

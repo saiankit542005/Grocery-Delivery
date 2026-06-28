@@ -19,7 +19,6 @@ const getAdminStatus = (email: string | null | undefined): boolean => {
   return adminEmails.includes(email.toLowerCase());
 };
 
-
 //Register
 //POST /api/auth/register
 
@@ -53,33 +52,31 @@ export const register = async (req: Request, res: Response) => {
   res.status(201).json({ user: userData, token });
 };
 
-
-
-
 //Login
 //POST /api/auth/login
 
 export const login = async (req: Request, res: Response) => {
-  const {email, password } = req.body;
+  const { email, password } = req.body;
 
   if (!email || !password) {
     res.status(400).json({ message: "Please provide email and password" });
   }
 
   const user = await prisma.user.findUnique({
-    where: { email: email.toLowerCase() },include:{addresses : true}
+    where: { email: email.toLowerCase() },
+    include: { addresses: true },
   });
 
   if (!user) {
     res.status(401).json({ message: "Invalid email or password" });
   }
 
-  const isMatch = await bcrypt.compare(password,user.password);
-  if(!isMatch) {
-   return  res.status(401).json({ message: "Invalid email or password" }); 
+  const isMatch = await bcrypt.compare(password, user!.password);
+  if (!isMatch) {
+    return res.status(401).json({ message: "Invalid email or password" });
   }
 
-  const token = generateToken(user.id);
+  const token = generateToken(user!.id);
 
   const userData: any = { ...user };
   delete userData.password;
@@ -87,5 +84,3 @@ export const login = async (req: Request, res: Response) => {
 
   res.json({ user: userData, token });
 };
-
-

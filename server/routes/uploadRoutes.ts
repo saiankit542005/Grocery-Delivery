@@ -24,7 +24,7 @@ uploadRouter.post("/", auth, upload.single("image"), async (req, res) => {
 
     res.json({ url: result.secure_url });
   } catch (error: any) {
-    res.json(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 

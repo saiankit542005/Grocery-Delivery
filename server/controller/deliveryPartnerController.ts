@@ -26,6 +26,8 @@ export const loginPartner = async (req: Request, res: Response) => {
       email: email.toLowerCase(),
     },
   });
+  console.log("EMAIL:", email);
+  console.log("PARTNER:", partner);
 
   if (!partner) {
     return res.status(401).json({
@@ -112,7 +114,7 @@ export const completeDelivery = async (req: Request, res: Response) => {
   const history = order.statusHistory as any[];
 
   history.push({
-    status: "Delivery",
+    status: "Delivered",
     note: "Delivered by partner",
     timestamp: new Date(),
   });
@@ -121,7 +123,7 @@ export const completeDelivery = async (req: Request, res: Response) => {
     where: { id: order.id },
     data: {
       status: "Delivered",
-      statusHistory: "Deliverey completed successfully",
+      statusHistory: "Delivery completed successfully",
     },
   });
 
@@ -164,7 +166,7 @@ export const cancelDelivery = async (req: Request, res: Response) => {
 // PUT => /api/delivery/my-deliveries/:id/status
 export const updateDeliveryStatus = async (req: Request, res: Response) => {
   const { status } = req.body;
-  const allowedStatuses = ["Packed", "out for Delivery"];
+  const allowedStatuses = ["Packed", "Out for Delivery"];
 
   if (!allowedStatuses.includes(status)) {
     return res.status(400).json({ message: "Invalid status update" });
@@ -193,7 +195,9 @@ export const updateDeliveryStatus = async (req: Request, res: Response) => {
 //Update  live location
 // PUT => /api/delivery/my-deliveries/:id/location
 export const updateLocation = async (req: Request, res: Response) => {
-  const { lat, lan } = req.body;
+    console.log("BODY:", req.body);
+
+  const { lat, lng } = req.body;
 
   const order = await prisma.order.findFirst({
     where: {
@@ -205,8 +209,9 @@ export const updateLocation = async (req: Request, res: Response) => {
 
   await prisma.order.update({
     where: { id: order!.id },
-    data: { liveLocation: { lat, lan, updatedAd: new Date() } },
+    data: { liveLocation: { lat, lng, updatedAt: new Date() } },
   });
-
+  console.log("Saved liveLocation:");
+  
   res.json({ success: true });
 };

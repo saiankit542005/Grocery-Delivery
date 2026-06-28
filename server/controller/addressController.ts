@@ -86,7 +86,7 @@ export const updateAddress = async (req: Request, res: Response) => {
   if (city) data.city = city;
   if (state) data.state = state;
   if (zip) data.zip = zip;
-  if (isDefault !== undefined) data.undefined = isDefault;
+  if (isDefault !== undefined) data.isDefault = isDefault;
   if (lat != null) data.lat = Number(lat);
   if (lng != null) data.lng = Number(lng);
 
