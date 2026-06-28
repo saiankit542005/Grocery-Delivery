@@ -35,6 +35,7 @@ export default function AdminDeliveryPartners() {
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
+     setSaving(true);
     try {
       await api.post("/admin/delivery-partners", form);
       toast.success("Delivery partner onboarded successfully");
@@ -59,7 +60,7 @@ export default function AdminDeliveryPartners() {
       await api.put(`/admin/delivery-partners/${id}`, { isActive: !isActive });
       toast.success(isActive ? "Partner deactivated" : "Partner activated");
       fetchPartners();
-    } catch (error) {
+    } catch (error:any) {
       toast.error(error?.response.data?.message || "Failed");
     }
   };

@@ -29,7 +29,7 @@ export default function AdminOrders() {
     try {
       const { data } = await api.get("/admin/delivery-partners");
       setPartners(data.partners.filter((p: DeliveryPartner) => p.isActive));
-    } catch (error) {
+    } catch (error:any) {
       console.log(error);
     }
   };
@@ -59,7 +59,7 @@ export default function AdminOrders() {
       setAssignModal(null);
       setSelectedPartner("");
       fetchOrders();
-    } catch (error) {
+    } catch (error:any) {
       toast.error(error?.response?.data?.message || "Failed");
     }
   };

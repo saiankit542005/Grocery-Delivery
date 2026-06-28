@@ -28,7 +28,7 @@ const Login = () => {
       } else {
         await register(name, email, password);
       }
-    } catch (error) {
+    } catch (error:any) {
       toast.error(error.response?.data?.message || error?.message);
     } finally {
       setLoading(false);
