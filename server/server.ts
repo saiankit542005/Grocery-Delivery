@@ -31,7 +31,7 @@ const port = process.env.PORT || 5000;
 app.get("/", (req: Request, res: Response) => {
   res.send("Server is Live!");
 });
-
+console.log(process.env.PORT);
 app.use("/api/auth", authRouter);
 app.use("/api/products", productRouter);
 app.use("/api/upload", uploadRouter);
