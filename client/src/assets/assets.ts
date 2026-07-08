@@ -72,7 +72,7 @@ export const footerData = {
     socials: [
       { icon: SiFacebook, link: "#" },
       { icon: SiX, link: "#" },
-      { icon: SiInstagram, link: "#" },
+      { icon: SiInstagram, link: "https://www.instagram.com/ankitsaini5501/" },
     ],
   },
 
