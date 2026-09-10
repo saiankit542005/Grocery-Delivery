@@ -3,7 +3,7 @@
 > A full-stack grocery delivery web application built with a modern
 > React + TypeScript frontend and a Node.js/TypeScript backend.
 
-**Live Demo:** https://grocery-delivery-ashen-five.vercel.app/\
+**Live Demo:** https://grocery-delivery-ashen-five.vercel.app/
 
 ------------------------------------------------------------------------
 
@@ -291,12 +291,11 @@ Try the deployed application:
 
 ------------------------------------------------------------------------
 
-## 🎥 Project Tutorial
+## 📚 Learning Reference
 
-The project was developed/followed with the help of the following
-tutorial:
+This project was developed as a hands-on learning project with guidance from the following YouTube tutorial:
 
-**https://www.youtube.com/watch?v=saiDl2Qacm8&t=32404s**
+🔗 [YouTube Tutorial](https://www.youtube.com/watch?v=saiDl2Qacm8&t=32404s)
 
 ------------------------------------------------------------------------
 
@@ -372,12 +371,13 @@ development skills, including:
 
 **Ankit Saini**
 
-------------------------------------------------------------------------
+Full-Stack Web Development Project  
+Built with React, TypeScript, Node.js, and Prisma.
+
+---
 
 ## 📄 License
 
-This project is intended for learning and portfolio purposes.
+This project was created for learning and portfolio purposes.
 
-If you reuse or extend this project, please follow the licensing terms
-of the original code, assets, libraries, and tutorial used during
-development.
+Please respect the licensing terms of the original tutorial, third-party libraries, assets, and other resources used in this project.
