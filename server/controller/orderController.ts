@@ -67,7 +67,7 @@ export const createOrder = async (req: Request, res: Response) => {
         {
           status: "Placed",
           note: "Order placed successfully",
-          itmestamp: new Date(),
+          timestamp: new Date(),
         },
       ],
     },

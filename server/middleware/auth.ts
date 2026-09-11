@@ -8,7 +8,7 @@ const auth = (req: Request, res: Response, next: NextFunction) => {
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res
         .status(401)
-        .json({ message: "Not token provied, authorization denied" });
+        .json({ message: "Not token provided, authorization denied" });
     }
 
     const token = authHeader.split(" ")[1];
